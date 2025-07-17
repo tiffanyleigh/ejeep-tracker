@@ -1,0 +1,22 @@
+{% extends "tracker/base.html" %}
+{% block content %}
+<div class="form-container">
+    <h2>Start Drive</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label for="ejeep_letter">E-Jeep Letter:</label>
+        <input type="text" name="ejeep_letter" id="ejeep_letter" required>
+
+        <label for="route">Select Route:</label>
+        <select name="route" id="route" required>
+            <option value="">-- Select --</option>
+            <option value="Line B">Line B</option>
+            <option value="Express Line A">Express Line A</option>
+            <option value="Express Line B">Express Line B</option>
+        </select>
+
+        <button type="submit">Start</button>
+    </form>
+</div>
+{% endblock %}
+

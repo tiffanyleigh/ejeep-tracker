@@ -1,0 +1,40 @@
+{% extends "tracker/base.html" %}
+{% block content %}
+
+<div class="form-container">
+    <h2>Charging Station</h2>
+    <p><strong>Driver:</strong> {{ user.username }}</p>
+
+    {% if request.session.charging %}
+        <p style="color: green; font-weight: bold;">🔋 Charging in progress...</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" name="end">End Charging</button>
+        </form>
+    {% else %}
+        <form method="post">
+            {% csrf_token %}
+            <label for="ejeep_letter">E-Jeep Letter:</label>
+            <input type="text" name="ejeep_letter" id="ejeep_letter" required>
+            <button type="submit" name="start">Start Charge</button>
+        </form>
+    {% endif %}
+</div>
+
+<div class="time-display">
+    <strong>Time Today:</strong> <span id="time-now"></span>
+</div>
+
+<script>
+    function updateTime() {
+        const now = new Date();
+        const timeString = now.toLocaleString();
+        document.getElementById("time-now").innerText = timeString;
+    }
+
+    setInterval(updateTime, 1000);
+    updateTime();
+</script>
+
+{% endblock %}
+

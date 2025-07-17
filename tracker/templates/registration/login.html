@@ -1,0 +1,22 @@
+{% extends "tracker/base.html" %}
+
+{% block content %}
+<div style="background-color: #f2f6fc; height: 100vh; display: flex; justify-content: center; align-items: center;">
+    <div style="background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+        <h2 style="text-align: center; margin-bottom: 20px; color: #003366;">Driver Login</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label for="username">Username:</label>
+            <input type="text" name="username" required><br><br>
+
+            <label for="password">Password:</label>
+            <input type="password" name="password" required><br><br>
+
+            <div style="text-align: center;">
+                <button type="submit" style="background-color: #003366; color: white; border: none; padding: 10px 20px; border-radius: 5px;">Log In</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,35 @@
+{% extends "tracker/base.html" %}
+{% block content %}
+<div style="
+    background-image: url('https://theguidon.com/1112/main/wp-content/uploads/2024/10/Ejeep-Santos-1-1.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    padding: 100px 20px;
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 1px 1px 4px black;
+">
+
+    <h1 style="font-size: 2.5em;">Welcome to the E-Jeep Tracker</h1>
+    <p style="font-size: 1.2em; max-width: 600px;">
+        Monitor E-Jeep locations, track routes, and ride efficiently across campus.
+    </p>
+
+    <a href="{% url 'login' %}"
+       style="padding: 12px 24px; background-color: #003A6C; color: white; border-radius: 6px; text-decoration: none; margin: 15px; font-weight: bold;">
+       Driver Login
+    </a>
+
+    <a href="#"
+       style="padding: 12px 24px; background-color: #c55e00; color: white; border-radius: 6px; text-decoration: none; margin: 15px; font-weight: bold;">
+       Rider Info
+    </a>
+
+</div>
+{% endblock %}
+

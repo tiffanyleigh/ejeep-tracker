@@ -1,0 +1,83 @@
+{% extends 'tracker/base.html' %}
+
+{% block content %}
+<h2>Drive Tracker</h2>
+
+<div class="time-display" id="time-today"></div>
+
+<p><strong>Route:</strong> {{ session.route }}</p>
+<p><strong>Start Time:</strong> {{ session.started_at }}</p>
+<p><strong>Current Stop:</strong> {{ current_stop }}</p>
+<p><strong>Next Stop:</strong> {{ next_stop }}</p>
+
+{% if session.current_stop_index == 0 %}
+  <p><strong>Status:</strong> About to Depart 🚏</p>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" name="action" value="depart">Depart Stop</button>
+  </form>
+
+
+{% elif not session.in_transit and not route_complete %}
+  <p><strong>Status:</strong> Next Stop 🚏</p>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" name="action" value="depart">Depart Stop</button>
+  </form>
+
+{% elif session.in_transit and not route_complete %}
+  <p><strong>Status:</strong> In Transit 🚐</p>
+  <form method="post">
+    {% csrf_token %}
+    <label for="passengers_in">Passengers In:</label>
+    <input type="number" name="passengers_in" id="passengers_in" value="0">
+
+    <label for="passengers_out">Passengers Out:</label>
+    <input type="number" name="passengers_out" id="passengers_out" value="0">
+
+    <p><strong>Net Passengers:</strong> <span id="net-count">{{ net_passengers }}</span></p>
+
+    <button type="submit" name="action" value="arrive">Arrived Stop</button>
+  </form>
+
+{% else %}
+  <p><strong>Status:</strong> Route Complete ✅</p>
+  <form action="{% url 'dashboard' %}" method="get">
+    <button type="submit">Back to Dashboard</button>
+  </form>
+{% endif %}
+
+<form action="{% url 'dashboard' %}" method="get" style="margin-top: 10px;">
+    <button type="submit" class="btn btn-danger">End Route</button>
+</form>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function updateTime() {
+    const now = new Date();
+    document.getElementById('time-today').innerText = 'Time Today: ' + now.toLocaleString();
+}
+setInterval(updateTime, 1000);
+updateTime();
+
+const inInput = document.getElementById("passengers_in");
+const outInput = document.getElementById("passengers_out");
+const netDisplay = document.getElementById("net-count");
+
+function updateNet() {
+    const valIn = parseInt(inInput.value) || 0;
+    const valOut = parseInt(outInput.value) || 0;
+    netDisplay.textContent = valIn - valOut;
+}
+
+if (inInput && outInput) {
+    inInput.addEventListener("input", updateNet);
+    outInput.addEventListener("input", updateNet);
+}
+</script>
+{% endblock %}
+

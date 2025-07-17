@@ -1,0 +1,9 @@
+{% extends "tracker/base.html" %}
+{% block content %}
+<div style="text-align: center;">
+    <h2 style="color: #003A6C;">Welcome, {{ user.username }}</h2>
+    <p>Select an action to begin:</p>
+    <a href="{% url 'start_drive' %}" style="padding: 12px 25px; background-color: #007B5E; color: white; border-radius: 5px; text-decoration: none; margin: 10px;">Start Drive</a>
+</div>
+{% endblock %}
+
