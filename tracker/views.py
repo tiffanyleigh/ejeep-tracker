@@ -71,7 +71,7 @@ def landing(request):
             })
 
     return render(request, 'tracker/landing.html', {
-        'rider_infos': rider_infos   # 🎯 this line sends updates to the template
+        'rider_infos': rider_infos  
     })
 
 
@@ -81,7 +81,7 @@ def rider_info(request):
     from django.db.models import Max
     from .models import StopLog, DriveSession
 
-    selected_route = request.GET.get('route')  # Fetch route from URL parameters
+    selected_route = request.GET.get('route')  
 
     latest_logs = (
         StopLog.objects.values('drive_session__ejeep_letter', 'drive_session__route')
@@ -92,7 +92,7 @@ def rider_info(request):
 
     for log in latest_logs:
         if selected_route and log['drive_session__route'] != selected_route:
-            continue  # Skip if route doesn't match selected filter
+            continue  
 
         stoplog = StopLog.objects.filter(
             drive_session__ejeep_letter=log['drive_session__ejeep_letter'],
@@ -114,14 +114,14 @@ def rider_info(request):
                 'next_stop': next_stop,
                 'net_passengers': session.passengers_in - session.passengers_out,
                 'departed_at': stoplog.departed_at,
-                'current_stop': stoplog.stop_name,  # ⚠️ Add this for visual indicator
+                'current_stop': stoplog.stop_name,  
             })
 
     return render(request, 'tracker/rider_info.html', {
         'rider_infos': rider_infos,
         'selected_route': selected_route,
         'routes': ROUTES.keys(),
-        'ROUTES': ROUTES   # ✅ Pass ROUTES to template
+        'ROUTES': ROUTES   
     })
 
 
