@@ -25,11 +25,44 @@
        Driver Login
     </a>
 
-    <a href="#"
+    <a href="{% url 'rider_info' %}"
        style="padding: 12px 24px; background-color: #c55e00; color: white; border-radius: 6px; text-decoration: none; margin: 15px; font-weight: bold;">
        Rider Info
     </a>
 
 </div>
+
+<!-- Rider Info Map Display -->
+<div style="margin-top: 40px; width: 100%; max-width: 900px; background: rgba(255,255,255,0.90); color: #003366; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 30px 20px;">
+    <h2 style="text-align:center; color: #003A6C;">Operating E-jeeps (All Lines)</h2>
+    {% if rider_infos %}
+        <div style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: center;">
+              {% for info in rider_infos %}
+            <div style="flex: 1 1 250px; min-width: 250px; background: #f8f9fa; border-radius: 8px; margin: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); padding: 18px 12px;">
+                <div style="font-size: 1.1em; font-weight: bold; margin-bottom: 5px;">
+                    {{ info.ejeep_letter }} <span style="font-size: 0.9em; color: #c55e00;">({{ info.route }})</span>
+            </div>
+                <div style="margin-bottom: 8px;">
+                    <span style="font-weight: bold;">Current Stop:</span> {{ info.stop_name }}
+          </div>
+                <div style="margin-bottom: 8px;">
+                    <span style="font-weight: bold;">Arrived:</span> {{ info.arrived_at|date:"M d, H:i" }}<br>
+                    <span style="font-weight: bold;">Departed:</span> {{ info.departed_at|date:"M d, H:i" }}
+      </div>
+                <div style="margin-bottom: 8px;">
+                    <span style="font-weight: bold;">Net Passengers:</span> {{ info.net_passengers }}
+                </div>
+                <div>
+                    <span style="font-weight: bold;">From Stop:</span> {{ info.from_stop|default:"N/A" }}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+    {% else %}
+        <p style="text-align:center; color: #888;">No eJeep data available yet.</p>
+    {% endif %}
+</div>
+
+
 {% endblock %}
 

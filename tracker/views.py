@@ -36,8 +36,99 @@ ROUTES = {
     ]
 }
 
+from django.db.models import Max
+
 def landing(request):
-    return render(request, 'tracker/landing.html')
+    latest_logs = (
+        StopLog.objects.values('drive_session__ejeep_letter', 'drive_session__route')
+        .annotate(latest_departed=Max('departed_at'))
+    )
+
+    rider_infos = []
+
+    for log in latest_logs:
+        stoplog = StopLog.objects.filter(
+            drive_session__ejeep_letter=log['drive_session__ejeep_letter'],
+            drive_session__route=log['drive_session__route'],
+            departed_at=log['latest_departed']
+        ).first()
+
+        if stoplog:
+            rider_infos.append({
+                'ejeep_letter': log['drive_session__ejeep_letter'],
+                'route': log['drive_session__route'],
+                'stop_name': stoplog.stop_name,
+                'departed_at': stoplog.departed_at,
+                'arrived_at': stoplog.arrived_at,
+                'net_passengers': stoplog.net_passengers,
+                'from_stop': StopLog.objects.filter(
+                    drive_session=stoplog.drive_session,
+                    departed_at__lt=stoplog.departed_at
+                ).order_by('-departed_at').first().stop_name if StopLog.objects.filter(
+                    drive_session=stoplog.drive_session,
+                    departed_at__lt=stoplog.departed_at
+                ).exists() else None
+            })
+
+    return render(request, 'tracker/landing.html', {
+        'rider_infos': rider_infos   # 🎯 this line sends updates to the template
+    })
+
+
+from collections import defaultdict
+
+def rider_info(request):
+    from django.db.models import Max
+    from .models import StopLog, DriveSession
+
+    selected_route = request.GET.get('route')  # Fetch route from URL parameters
+
+    latest_logs = (
+        StopLog.objects.values('drive_session__ejeep_letter', 'drive_session__route')
+        .annotate(latest_departed=Max('departed_at'))
+    )
+
+    rider_infos = []
+
+    for log in latest_logs:
+        if selected_route and log['drive_session__route'] != selected_route:
+            continue  # Skip if route doesn't match selected filter
+
+        stoplog = StopLog.objects.filter(
+            drive_session__ejeep_letter=log['drive_session__ejeep_letter'],
+            drive_session__route=log['drive_session__route'],
+            departed_at=log['latest_departed']
+        ).first()
+
+        if stoplog:
+            session = stoplog.drive_session
+            stops = ROUTES.get(session.route, [])
+            current_index = session.current_stop_index % len(stops)
+            next_stop = stops[current_index] if current_index < len(stops) else "Route Complete"
+
+            rider_infos.append({
+                'ejeep_letter': session.ejeep_letter,
+                'route': session.route,
+                'from_stop': stoplog.stop_name,
+                'stops': stops,
+                'next_stop': next_stop,
+                'net_passengers': session.passengers_in - session.passengers_out,
+                'departed_at': stoplog.departed_at,
+                'current_stop': stoplog.stop_name,  # ⚠️ Add this for visual indicator
+            })
+
+    return render(request, 'tracker/rider_info.html', {
+        'rider_infos': rider_infos,
+        'selected_route': selected_route,
+        'routes': ROUTES.keys(),
+        'ROUTES': ROUTES   # ✅ Pass ROUTES to template
+    })
+
+
+
+
+
+
 
 @login_required
 def dashboard(request):

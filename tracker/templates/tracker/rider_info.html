@@ -1,0 +1,95 @@
+{% extends "tracker/base.html" %}
+{% load dict_extras %}
+{% block content %}
+<div style="margin: 40px auto; width: 100%; max-width: 900px; background: rgba(255,255,255,0.90); color: #003366; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 30px 20px;">
+
+    <h2 style="text-align:center; color: #003A6C;">E-Jeep Map (All Lines)</h2>
+
+    <!-- Route Selection Form -->
+    <form method="get" action="{% url 'rider_info' %}" style="text-align: center; margin-bottom: 20px;">
+        <label for="route" style="font-weight: bold; margin-right: 10px;">Select Route:</label>
+        <select name="route" id="route" onchange="this.form.submit()" style="padding: 5px 10px;">
+            <option value="">All Routes</option>
+            {% for route in routes %}
+                <option value="{{ route }}" {% if route == selected_route %}selected{% endif %}>{{ route }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
+    {% if selected_route %}
+        <h3 style="text-align:center; color: #555;">Showing Updates for: {{ selected_route }}</h3>
+    {% endif %}
+
+    {% if rider_infos %}
+        <div style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: center;">
+        {% for info in rider_infos %}
+            <div style="flex: 1 1 250px; min-width: 250px; background: #f8f9fa; border-radius: 8px; margin: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); padding: 18px 12px; display: flex; flex-direction: column; justify-content: space-between;">
+
+                <!-- Tiny E-Jeep Route Visualization -->
+                <div style="margin-bottom: 12px;">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        {% for stop in info.stops %}
+                            <div style="display: flex; flex-direction: column; align-items: center;">
+                                <div style="width: 22px; height: 22px; border-radius: 50%; background: {% if stop == info.current_stop %}#2196f3{% else %}#bbb{% endif %}; color: white; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 2px solid #888; position: relative;">
+                                    {% if stop == info.current_stop %}
+                                        🚌
+                                    {% else %}
+                                        &bull;
+                                    {% endif %}
+                                </div>
+                                <div style="font-size: 10px; color: #444; margin-top: 2px; max-width: 40px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ stop }}</div>
+                            </div>
+                            {% if not forloop.last %}
+                                <div style="height: 2px; width: 16px; background: #888; margin: 0 2px;"></div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div style="text-align:center; font-size: 12px; color: #333; margin-top: 7px;">
+                        <span style="margin-right: 10px;">👥 {{ info.net_passengers }}</span>
+                        <span>🕒 {{ info.departed_at|date:"H:i" }}</span>
+                    </div>
+                </div>
+
+                <div>
+                    <div style="font-size: 1.1em; font-weight: bold; margin-bottom: 5px;">
+                        {{ info.ejeep_letter }} <span style="font-size: 0.9em; color: #c55e00;">({{ info.route }})</span>
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <span style="font-weight: bold;">Departed From:</span> {{ info.from_stop }}
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <span style="font-weight: bold;">Next Stop:</span> {{ info.next_stop }}
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <span style="font-weight: bold;">Net Passengers:</span> {{ info.net_passengers }}
+                    </div>
+                    <div style="margin-bottom: 8px;">
+                        <span style="font-weight: bold;">Last Updated:</span> {{ info.departed_at|date:"M d, H:i" }}
+                    </div>
+                </div>
+
+                <!-- Simple Route List with Stop Names -->
+                <div style="margin-top: 15px; background: #f0f0f0; border-radius: 6px; padding: 10px;">
+                    <div style="font-weight: bold; margin-bottom: 6px;">Route Map:</div>
+                    {% for stop in ROUTES|dict_get:info.route %}
+                        <div style="display: flex; align-items: center; margin: 4px 0;">
+                            {% if stop == info.current_stop %}
+                                <span style="font-size: 1.2em; margin-right: 6px;">🚌</span>
+                            {% elif stop == info.next_stop %}
+                                <span style="font-size: 1.2em; margin-right: 6px; color: #c55e00;">➡️</span>
+                            {% else %}
+                                <span style="width: 20px; display: inline-block;"></span>
+                            {% endif %}
+                            <span>{{ stop }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+        {% endfor %}
+        </div>
+    {% else %}
+        <p style="text-align:center; color: #888;">No eJeep data available yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
