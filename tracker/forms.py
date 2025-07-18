@@ -7,7 +7,7 @@ ROUTE_CHOICES = [
 ]
 
 class StartDriveForm(forms.Form):
-    ejeep_letter = forms.CharField(label='E-Jeep Letter', max_length=10)
+    ejeep_code = forms.CharField(label='E-Jeep Code', max_length=10)
     route = forms.ChoiceField(label='Route', choices=ROUTE_CHOICES)
 
 class PassengerForm(forms.Form):

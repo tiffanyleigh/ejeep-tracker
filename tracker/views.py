@@ -40,7 +40,7 @@ from django.db.models import Max
 
 def landing(request):
     latest_logs = (
-        StopLog.objects.values('drive_session__ejeep_letter', 'drive_session__route')
+        StopLog.objects.values('drive_session__ejeep_code', 'drive_session__route')
         .annotate(latest_departed=Max('departed_at'))
     )
 
@@ -48,14 +48,14 @@ def landing(request):
 
     for log in latest_logs:
         stoplog = StopLog.objects.filter(
-            drive_session__ejeep_letter=log['drive_session__ejeep_letter'],
+            drive_session__ejeep_code=log['drive_session__ejeep_code'],
             drive_session__route=log['drive_session__route'],
             departed_at=log['latest_departed']
         ).first()
 
         if stoplog:
             rider_infos.append({
-                'ejeep_letter': log['drive_session__ejeep_letter'],
+                'ejeep_code': log['drive_session__ejeep_code'],
                 'route': log['drive_session__route'],
                 'stop_name': stoplog.stop_name,
                 'departed_at': stoplog.departed_at,
@@ -84,7 +84,7 @@ def rider_info(request):
     selected_route = request.GET.get('route')  
 
     latest_logs = (
-        StopLog.objects.values('drive_session__ejeep_letter', 'drive_session__route')
+        StopLog.objects.values('drive_session__ejeep_code', 'drive_session__route')
         .annotate(latest_departed=Max('departed_at'))
     )
 
@@ -95,7 +95,7 @@ def rider_info(request):
             continue  
 
         stoplog = StopLog.objects.filter(
-            drive_session__ejeep_letter=log['drive_session__ejeep_letter'],
+            drive_session__ejeep_code=log['drive_session__ejeep_code'],
             drive_session__route=log['drive_session__route'],
             departed_at=log['latest_departed']
         ).first()
@@ -107,7 +107,7 @@ def rider_info(request):
             next_stop = stops[current_index] if current_index < len(stops) else "Route Complete"
 
             rider_infos.append({
-                'ejeep_letter': session.ejeep_letter,
+                'ejeep_code': session.ejeep_code,
                 'route': session.route,
                 'from_stop': stoplog.stop_name,
                 'stops': stops,
@@ -137,11 +137,11 @@ def dashboard(request):
 @login_required
 def start_drive(request):
     if request.method == 'POST':
-        ejeep_letter = request.POST.get('ejeep_letter')
+        ejeep_code = request.POST.get('ejeep_code')
         route = request.POST.get('route')
         session = DriveSession.objects.create(
             driver=request.user,
-            ejeep_letter=ejeep_letter,
+            ejeep_code=ejeep_code,
             route=route,
             current_stop_index=0,
             in_transit=True  
@@ -236,7 +236,7 @@ def track_stop(request):
             if form.is_valid():
                 StopLog.objects.create(
                     driver=request.user,
-                    ejeep_letter=session.ejeep_letter,
+                    ejeep_code=session.ejeep_code,
                     route=session.route,
                     stop_name=current_stop,
                     arrived_at=session.started_at,

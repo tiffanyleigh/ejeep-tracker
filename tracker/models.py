@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 
 class DriveSession(models.Model):
     driver = models.ForeignKey(User, on_delete=models.CASCADE)
-    ejeep_letter = models.CharField(max_length=10)
+    ejeep_code = models.CharField(max_length=10)
     route = models.CharField(max_length=50)
     current_stop_index = models.IntegerField(default=0)
     started_at = models.DateTimeField(auto_now_add=True)
@@ -15,7 +15,7 @@ class DriveSession(models.Model):
     in_transit = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{self.ejeep_letter} - {self.route} - {self.driver.username}'
+        return f'{self.ejeep_code} - {self.route} - {self.driver.username}'
 
 class StopLog(models.Model):
     drive_session = models.ForeignKey(DriveSession, on_delete=models.CASCADE, null=True, blank=True)
@@ -28,11 +28,11 @@ class StopLog(models.Model):
     driver_name = models.CharField(max_length=100)
 
     def __str__(self):
-        return f'{self.stop_name} ({self.drive_session.ejeep_letter})'
+        return f'{self.stop_name} ({self.drive_session.ejeep_code})'
 
 class ChargeLog(models.Model):
     driver = models.ForeignKey(User, on_delete=models.CASCADE)
-    ejeep_letter = models.CharField(max_length=5)
+    ejeep_code = models.CharField(max_length=5)
     start_time = models.DateTimeField(auto_now_add=True)
     end_time = models.DateTimeField(null=True, blank=True) 
 

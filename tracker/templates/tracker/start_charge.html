@@ -14,8 +14,8 @@
     {% else %}
         <form method="post">
             {% csrf_token %}
-            <label for="ejeep_letter">E-Jeep Letter:</label>
-            <input type="text" name="ejeep_letter" id="ejeep_letter" required>
+            <label for="ejeep_code">E-Jeep Letter:</label>
+            <input type="text" name="ejeep_code" id="ejeep_code" required>
             <button type="submit" name="start">Start Charge</button>
         </form>
     {% endif %}

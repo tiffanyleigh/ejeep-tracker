@@ -11,6 +11,6 @@ class StopLogAdmin(admin.ModelAdmin):
 
 @admin.register(ChargeLog)
 class ChargeLogAdmin(admin.ModelAdmin):
-    list_display = ('driver', 'ejeep_letter', 'start_time', 'end_time')
-    search_fields = ('ejeep_letter', 'driver__username')
+    list_display = ('driver', 'ejeep_code', 'start_time', 'end_time')
+    search_fields = ('ejeep_code', 'driver__username')
 

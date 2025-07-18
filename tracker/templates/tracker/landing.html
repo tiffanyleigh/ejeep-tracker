@@ -40,7 +40,7 @@
               {% for info in rider_infos %}
             <div style="flex: 1 1 250px; min-width: 250px; background: #f8f9fa; border-radius: 8px; margin: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); padding: 18px 12px;">
                 <div style="font-size: 1.1em; font-weight: bold; margin-bottom: 5px;">
-                    {{ info.ejeep_letter }} <span style="font-size: 0.9em; color: #c55e00;">({{ info.route }})</span>
+                    {{ info.ejeep_code }} <span style="font-size: 0.9em; color: #c55e00;">({{ info.route }})</span>
             </div>
                 <div style="margin-bottom: 8px;">
                     <span style="font-weight: bold;">Current Stop:</span> {{ info.stop_name }}
